@@ -1,0 +1,22 @@
+type = "fluxmonitor"
+schemaVersion = 1
+name = "CoinGecko - XTT/USD"
+forwardingAllowed = false
+maxTaskDuration = "30s"
+absoluteThreshold = 0
+contractAddress = "0x4c3240A2AaC476AFd7E9E677f4f041324ef3ad6D"
+drumbeatEnabled = false
+drumbeatSchedule = "CRON_TZ=UTC */10 * * * * *"
+idleTimerPeriod = "30s"
+idleTimerDisabled = false
+pollTimerPeriod = "1m0s"
+pollTimerDisabled = false
+threshold = 0.1
+observationSource = """
+    // data source 1
+    ds1 [type=http method=GET url="https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=GBEX&convert=USDT" allowUnrestrictedNetworkAccess="true" headers="[\\"X-CMC_PRO_API_KEY\\", \\"<API_KEY>\\"]"]
+    ds1_parse [type="jsonparse" path="data,GBEX,quote,USDT,price"]
+    ds1_multiply     [type="multiply" input="$(ds1_parse)" times=10000]
+    ds1 -> ds1_parse -> ds1_multiply -> medianized_answer
+    medianized_answer [type=median]
+"""

@@ -1,0 +1,22 @@
+type = "fluxmonitor"
+schemaVersion = 1
+name = "CoinGecko - XDC/USD"
+forwardingAllowed = false
+maxTaskDuration = "30s"
+absoluteThreshold = 0
+contractAddress = "0x09108366C40E08844D8F0634857A850138Bc9937"
+drumbeatEnabled = false
+drumbeatSchedule = "CRON_TZ=UTC */10 * * * * *"
+idleTimerPeriod = "30s"
+idleTimerDisabled = false
+pollTimerPeriod = "1m0s"
+pollTimerDisabled = false
+threshold = 0.1
+observationSource = """
+    // data source 1
+    ds1 [type="http" method=GET url="https://api.coingecko.com/api/v3/simple/price?ids=xdce-crowd-sale&vs_currencies=usd"]
+    ds1_parse [type="jsonparse" path="xdce-crowd-sale,usd"]
+    ds1_multiply     [type="multiply" input="$(ds1_parse)" times=10000]
+    ds1 -> ds1_parse -> ds1_multiply -> medianized_answer
+    medianized_answer [type=median]
+"""
